@@ -1,0 +1,17 @@
+{
+  "name": "tagwithme",
+  "version": "1.0.0",
+  "description": "An app for getting people together at events.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Social",
+    "Events",
+    "Concerts",
+    "Meet"
+  ],
+  "author": "Binish Koirala",
+  "license": "ISC"
+}
