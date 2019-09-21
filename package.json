@@ -4,8 +4,8 @@
   "description": "An app for getting people together at events.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "test": "jest",
+    "start": "nodemon src/app.js"
   },
   "keywords": [
     "Social",
@@ -13,11 +13,20 @@
     "Concerts",
     "Meet"
   ],
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
   "author": "Binish Koirala",
   "license": "ISC",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^1.1.1",
+    "jest": "^24.9.0",
     "morgan": "^1.9.1",
-    "nodemon": "^1.19.2"
+    "nodemon": "^1.19.2",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
