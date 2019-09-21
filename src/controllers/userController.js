@@ -1,10 +1,10 @@
-// User registration
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
 
+// User registration
 const signUp = async function (req, res) {
     try {
         // Hash the password using bcrypt
@@ -17,7 +17,7 @@ const signUp = async function (req, res) {
         */
         const user = new User({
             _id: new mongoose.Types.ObjectId(),
-            email: req.body.email,
+            email: req.body.email.toLowerCase(),
             password: hashed_pass,
             first_name: req.body.first_name,
             last_name: req.body.last_name
@@ -39,6 +39,34 @@ const signUp = async function (req, res) {
     }
 }
 
+// User login
+const login = async function (req, res) {
+    try {
+        result = await bcrypt.compare(req.body.password, res.locals.user.password) // res.locals.user contains the user object from the validator middleware
+
+        if (result === true) {
+            return res.status(200).json({
+                success: {
+                    message: "Successfully logged in"
+                }
+            })
+        } else {
+            return res.status(401).json({
+                error: {
+                    message: "User authentication failed. Invalid password"
+                }
+            })
+        }
+    } catch (e) {
+        return res.status(400).json({
+            error: {
+                message: e
+            }
+        })
+
+    }
+}
 module.exports = {
-    signUp
+    signUp,
+    login
 }

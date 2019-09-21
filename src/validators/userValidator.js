@@ -28,15 +28,13 @@ const validate = {
                     message: "Please provide a valid email address"
                 }
             })
-        }
-
-        else {
-        // Last, check if the email pre-exists in the database
+        } else {
+            // Last, check if the email pre-exists in the database
             const user = await User.find({
-                email: req.body.email
+                email: req.body.email.toLowerCase()
             }).exec()
 
-            if (user.length === 0) {             // If no users exist already
+            if (user.length === 0) { // If no users exist already
                 next();
             } else {
                 return res.status(400).json({
@@ -45,6 +43,23 @@ const validate = {
                     }
                 })
             }
+        }
+    },
+    async login(req, res, next) {
+        const user = await User.find({
+            email: req.body.email.toLowerCase()
+        }).exec()
+
+        if (user.length === 0) { // If no users exist already
+            return res.status(400).json({
+                error: {
+                    message: "Email address does not exist. Please recheck email address"
+                }
+            })
+
+        } else {
+            res.locals.user = user[0]; // Set the user object in res.locals to be accessed after the next() function
+            next();
         }
     }
 }
