@@ -1,14 +1,51 @@
-const http = require('http')
-const express = require('express')
-const bodyParser = require('body-parser')
+require('dotenv').config()
+const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const userRoutes = require('./routes/users')
+const mongoose = require('mongoose');
 
-app = express()
-app.use(bodyParser.json())
+// Set up mongo database from the cloud
+mongoose.connect('mongodb+srv://bjnis:' +
+  process.env.MONGO_ATLAS_PASSWORD +
+  '@tagwithmecluster-g3kgt.mongodb.net/test?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+  })
+
+app = express();
+app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: false,
   })
 )
+
+app.use(morgan('dev'));
+
+/* 
+    <------------------ Insert Cors Here -------------------->
+*/
+
+app.use('/user', userRoutes);
+
+// If no requests go through. Show a 404 error
+app.use((req, res, next) => {
+  const err = new Error('Resource not found');
+  err.status = 404;
+  next(err);
+})
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500); // 500 refers to internal database error
+  res.json({
+    error: {
+      message: err.message
+    }
+  })
+})
 
 const httpServer = http.createServer(app)
 const portForHTTP = process.env.PORT_HTTP || 8848
