@@ -1,9 +1,11 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
+const jwtSecret = process.env.JWT_SECRET_KEY;
 // User registration
 const signUp = async function (req, res) {
     try {
@@ -11,10 +13,6 @@ const signUp = async function (req, res) {
         const hashed_pass = await bcrypt.hash(req.body.password1, saltRounds);
 
         // Insert the user info into the database
-
-        /*
-                    <---------- Here ----------> 
-        */
         const user = new User({
             _id: new mongoose.Types.ObjectId(),
             email: req.body.email.toLowerCase(),
@@ -45,9 +43,18 @@ const login = async function (req, res) {
         result = await bcrypt.compare(req.body.password, res.locals.user.password) // res.locals.user contains the user object from the validator middleware
 
         if (result === true) {
+            const token = jwt.sign({
+                    email: res.locals.user.email,
+                    _id: res.locals.user._id
+                },
+                jwtSecret, {
+                    expiresIn: '1h'
+                })
+
             return res.status(200).json({
                 success: {
-                    message: "Successfully logged in"
+                    message: "Successfully logged in",
+                    token: token
                 }
             })
         } else {

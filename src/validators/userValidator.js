@@ -50,7 +50,7 @@ const validate = {
             email: req.body.email.toLowerCase()
         }).exec()
 
-        if (user.length === 0) { // If no users exist already
+        if (user.length === 0) { // If the email does not exist in the database
             return res.status(400).json({
                 error: {
                     message: "Email address does not exist. Please recheck email address"
