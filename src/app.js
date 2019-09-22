@@ -7,13 +7,25 @@ const userRoutes = require('./routes/users')
 const mongoose = require('mongoose');
 
 // Set up mongo database from the cloud
-mongoose.connect('mongodb+srv://bjnis:' +
-  process.env.MONGO_ATLAS_PASSWORD +
-  '@tagwithmecluster-g3kgt.mongodb.net/test?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true
-  })
+if (process.env.NODE_ENV === 'test') { // Test
+  mongoose.connect('mongodb+srv://avnv:' +
+    process.env.MONGO_ATLAS_TEST_PASSWORD +
+    '@cluster0-rwh1t.mongodb.net/test?retryWrites=true&w=majority', {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true
+    });
+} else { // Development database
+  mongoose.connect('mongodb+srv://bjnis:' +
+    process.env.MONGO_ATLAS_PASSWORD +
+    '@tagwithmecluster-g3kgt.mongodb.net/test?retryWrites=true&w=majority', {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true
+    });
+}
+
+
 
 app = express();
 app.use(bodyParser.json());
@@ -52,3 +64,5 @@ const portForHTTP = process.env.PORT_HTTP || 8848
 httpServer.listen(portForHTTP, function () {
   console.log("Server started successfully on localhost at port:", portForHTTP)
 })
+
+module.exports = app
