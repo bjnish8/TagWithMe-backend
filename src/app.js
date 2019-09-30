@@ -1,5 +1,6 @@
 require('dotenv').config()
 const http = require('http');
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -37,9 +38,8 @@ app.use(
 
 app.use(morgan('dev'));
 
-/* 
-    <------------------ Insert Cors Here -------------------->
-*/
+app.use(cors());
+
 
 app.use('/user', userRoutes);
 
